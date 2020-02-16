@@ -10,3 +10,4 @@ client = gspread.authorize(creds)
 sheet = client.open('ProductPrice').sheet1
 
 stuff = sheet.get_all_records()
+print(stuff)
