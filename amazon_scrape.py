@@ -44,6 +44,59 @@ class AmazonScrape(object):
 
             time.sleep(2)
 
+            first_result = self.driver.find_element_by_xpath('/html/body/div[1]/div[1]/div[1]/div[2]/div/span[4]/div[1]/div[6]')
+            asin = first_result.get_attribute("data-asin")
+            url = "https://www.amazon.com/dp/" + asin
+            price = self.get_product_price(url)
+            name = self.get_product_name(url)
+
+            prices.append(price)
+            urls.append(url)
+            names.append(name)
+
+            print(name)
+            print(price)
+            print(url)
+
+            time.sleep(2)
+
+        return prices, urls, names
+
+    def get_product_price(self, url):
+        self.driver.get(url)
+        try:
+            price = self.driver.find_element_by_id("priceblock_ourprice").text
+        except:
+            pass
+
+        try:
+            price = self.driver.find_element_by_id("priceblock_dealprice").text
+        except:
+            pass
+
+
+        if price is None:
+            price = "Not available"
+
+        else:
+            non_decimal = re.compile(r'[^\d.]+')
+            price = non_decimal.sub('', price)
+
+        return price
+
+    def get_product_name(self, url):
+        self.driver.get(url)
+        try:
+            product_name = self.driver.find_element_by_id("productTitle").text
+        except:
+            pass
+
+        if product_name is None:
+            product_name = "Not available"
+
+        return product_name
+
+
 items = ["toothpaste"]
 amazon_scrape = AmazonScrape(items)
 amazon_scrape.search_items()
