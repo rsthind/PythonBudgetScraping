@@ -12,14 +12,11 @@ import re
 import time
 import os
 
-class AmazonScrape(object):
+class AmazonDeals(object):
 
-    def __init__(self, items):
-        self.amazon_url = "https://www.amazon.com/"
-        self.items = items
+    def __init__(self):
+        self.amazon_url = "https://www.amazon.com/gp/goldbox?ref_=nav_cs_gb_azl"
 
-        #self.profile = webdriver.ChromeProfile()
-        #self.options = Options()
         DRIVER_PATH = os.getcwd() + "/chromedriver"
         self.driver = webdriver.Chrome(executable_path=DRIVER_PATH)
 
@@ -29,39 +26,28 @@ class AmazonScrape(object):
         urls = []
         prices = []
         names = []
-        for item in self.items:
-            for x in range(0, 2):
-                print(f"Searching for {item} and on the {x} time.")
+        for x in range(0, 8):
+            print(f"Searching for {x} of 8 deals.")
 
-                self.driver.get(self.amazon_url)
+            self.driver.get(self.amazon_url)
 
-                search_input = self.driver.find_element_by_id("twotabsearchtextbox")
-                search_input.send_keys(item)
+            first_result = self.driver.find_element_by_id("101_dealView_" + str(x))
+            image = first_result.find_element_by_id('dealImage')
+            url = image.get_attribute("href")
 
-                time.sleep(2)
+            print(url)
+            price = self.get_product_price(url)
+            name = self.get_product_name(url)
 
-                search_button = self.driver.find_element_by_xpath('//*[@id="nav-search"]/form/div[2]/div/input')
-                search_button.click()
+            prices.append(price)
+            urls.append(url)
+            names.append(name)
 
-                time.sleep(2)
+            print(name)
+            print(price)
+            print(url)
 
-                first_result = self.driver.find_element_by_xpath('/html/body/div[1]/div[1]/div[1]/div[2]/div/span[4]/div[1]/div[' + str(6+x) + ']')
-                asin = first_result.get_attribute("data-asin")
-                
-
-                url = "https://www.amazon.com/dp/" + asin
-                price = self.get_product_price(url)
-                name = self.get_product_name(url)
-
-                prices.append(price)
-                urls.append(url)
-                names.append(name)
-
-                print(name)
-                print(price)
-                print(url)
-
-                time.sleep(2)
+            time.sleep(2)
 
         return prices, urls, names
 
