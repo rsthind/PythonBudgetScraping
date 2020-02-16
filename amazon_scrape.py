@@ -97,6 +97,6 @@ class AmazonScrape(object):
         return product_name
 
 
-items = ["toothpaste"]
-amazon_scrape = AmazonScrape(items)
-amazon_scrape.search_items()
+#items = ["toothpaste"]
+#amazon_scrape = AmazonScrape(items)
+#amazon_scrape.search_items()
